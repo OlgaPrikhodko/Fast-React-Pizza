@@ -1,4 +1,4 @@
-import { Menu } from "@/types/menuTypes";
+import { Pizza } from "@/types/menuTypes";
 
 const API_URL = "https://react-fast-pizza-api.onrender.com/api";
 
@@ -10,5 +10,5 @@ export async function getMenu() {
 
   const { data } = await res.json();
 
-  return data as Menu[];
+  return data as Pizza[];
 }
