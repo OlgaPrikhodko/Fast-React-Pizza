@@ -9,6 +9,7 @@ import {
   ActionFunctionArgs,
   Form,
   redirect,
+  useNavigation,
 } from "react-router-dom";
 
 import { Order } from "@/types/orderTypes";
@@ -39,6 +40,9 @@ const fakeCart = [
 ];
 
 const CreateOrder: React.FC = () => {
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
+
   // const [withPriority, setWithPriority] = useState(false);
   const cart = fakeCart;
 
@@ -79,7 +83,9 @@ const CreateOrder: React.FC = () => {
 
         <div>
           <input type="hidden" name="cart" value={JSON.stringify(cart)} />
-          <button>Order now</button>
+          <button disabled={isSubmitting}>
+            {isSubmitting ? "Placing order..." : "Order now"}
+          </button>
         </div>
       </Form>
     </div>
