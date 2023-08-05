@@ -1,64 +1,11 @@
-// Test ID: IIDSAT
-
+// Test ID: IIDSAT , CQE92U
+import { LoaderFunction, useLoaderData } from "react-router-dom";
+import { Order as OrderType } from "@/types/orderTypes";
 import { calcMinutesLeft, formatCurrency, formatDate } from "@/utils/helpers";
-
-interface Cart {
-  pizzaId: number;
-  name: string;
-  quantity: number;
-  unitPrice: number;
-  totalPrice: number;
-}
-
-interface Order {
-  id: string;
-  customer: string;
-  phone: string;
-  address: string;
-  priority: boolean;
-  estimatedDelivery: string;
-  cart: Cart[];
-  position: string;
-  orderPrice: number;
-  priorityPrice: number;
-}
-
-const order: Order = {
-  id: "ABCDEF",
-  customer: "Jonas",
-  phone: "123456789",
-  address: "Arroios, Lisbon , Portugal",
-  priority: true,
-  estimatedDelivery: "2027-04-25T10:00:00",
-  cart: [
-    {
-      pizzaId: 7,
-      name: "Napoli",
-      quantity: 3,
-      unitPrice: 16,
-      totalPrice: 48,
-    },
-    {
-      pizzaId: 5,
-      name: "Diavola",
-      quantity: 2,
-      unitPrice: 16,
-      totalPrice: 32,
-    },
-    {
-      pizzaId: 3,
-      name: "Romana",
-      quantity: 1,
-      unitPrice: 15,
-      totalPrice: 15,
-    },
-  ],
-  position: "-9.000,38.000",
-  orderPrice: 95,
-  priorityPrice: 19,
-};
+import { getOrder } from "@/services/apiRestaurant";
 
 const Order: React.FC = () => {
+  const order = useLoaderData() as OrderType;
   // Everyone can search for all orders, so for privacy reasons we're gonna gonna exclude names or address, these are only for the restaurant staff
   const {
     id,
@@ -98,6 +45,16 @@ const Order: React.FC = () => {
       </div>
     </div>
   );
+};
+
+export const loader: LoaderFunction = async ({
+  params,
+}: {
+  params: { orderId: string };
+}) => {
+  const order = await getOrder(params.orderId);
+
+  return order;
 };
 
 export default Order;
