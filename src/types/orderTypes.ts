@@ -5,7 +5,7 @@ export interface Cart {
   unitPrice: number;
   totalPrice: number;
 }
-// todo add status type
+// todo add status type "preparing"
 export interface Order {
   id: string;
   customer: string;

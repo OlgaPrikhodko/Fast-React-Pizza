@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router-dom";
+import { LoaderFunction, useLoaderData } from "react-router-dom";
 
 import { Pizza } from "@/types/menuTypes";
 import { getMenu } from "@/services/apiRestaurant";
@@ -16,9 +16,9 @@ function Menu() {
   );
 }
 
-export async function loader() {
+export const loader: LoaderFunction = async () => {
   const menu = await getMenu();
   return menu;
-}
+};
 
 export default Menu;

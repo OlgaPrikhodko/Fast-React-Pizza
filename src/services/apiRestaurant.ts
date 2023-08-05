@@ -21,3 +21,22 @@ export const getOrder = async (id: string): Promise<Order> => {
   const { data } = await res.json();
   return data as Order;
 };
+
+export async function createOrder(newOrder: Omit<Order, "id">): Promise<Order> {
+  try {
+    const res = await fetch(`${API_URL}/order`, {
+      method: "POST",
+      body: JSON.stringify(newOrder),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) throw Error();
+    const { data } = await res.json();
+
+    return data as Order;
+  } catch {
+    throw Error("Failed creating your order");
+  }
+}

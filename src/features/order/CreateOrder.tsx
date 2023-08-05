@@ -4,6 +4,16 @@
 //     str
 //   );
 
+import {
+  ActionFunction,
+  ActionFunctionArgs,
+  Form,
+  redirect,
+} from "react-router-dom";
+
+import { Order } from "@/types/orderTypes";
+import { createOrder } from "@/services/apiRestaurant";
+
 const fakeCart = [
   {
     pizzaId: 12,
@@ -30,13 +40,13 @@ const fakeCart = [
 
 const CreateOrder: React.FC = () => {
   // const [withPriority, setWithPriority] = useState(false);
-  // const cart = fakeCart;
+  const cart = fakeCart;
 
   return (
     <div>
       <h2>Ready to order? Let's go!</h2>
 
-      <form>
+      <Form method="POST">
         <div>
           <label>First Name</label>
           <input type="text" name="customer" required />
@@ -68,11 +78,35 @@ const CreateOrder: React.FC = () => {
         </div>
 
         <div>
+          <input type="hidden" name="cart" value={JSON.stringify(cart)} />
           <button>Order now</button>
         </div>
-      </form>
+      </Form>
     </div>
   );
+};
+
+type OrderForm = Omit<Order, "cart" | "priority" | "id"> & {
+  cart: string;
+  priority?: "on";
+};
+
+export const action: ActionFunction = async ({
+  request,
+}: ActionFunctionArgs) => {
+  const formData = await request.formData();
+  const data = Object.fromEntries(formData) as unknown as OrderForm;
+
+  const order: Omit<Order, "id"> = {
+    ...data,
+    cart: JSON.parse(data.cart),
+    priority: data.priority === "on",
+  };
+  console.log(order);
+
+  const newOrder = await createOrder(order);
+
+  return redirect(`/order/${newOrder.id}`);
 };
 
 export default CreateOrder;
