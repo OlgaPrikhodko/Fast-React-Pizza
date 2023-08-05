@@ -1,18 +1,19 @@
 // https://uibakery.io/regex-library/phone-number
-// const isValidPhone = (str) =>
-//   /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(
-//     str
-//   );
+const isValidPhone = (str) =>
+  /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(
+    str
+  );
 
 import {
   ActionFunction,
   ActionFunctionArgs,
   Form,
   redirect,
+  useActionData,
   useNavigation,
 } from "react-router-dom";
 
-import { Order } from "@/types/orderTypes";
+import { OrderPost } from "@/types/orderTypes";
 import { createOrder } from "@/services/apiRestaurant";
 
 const fakeCart = [
@@ -39,9 +40,17 @@ const fakeCart = [
   },
 ];
 
+type OrderForm = Omit<OrderPost, "cart" | "priority" | "id"> & {
+  cart: string;
+  priority?: "on";
+};
+type PostFormError = Partial<Pick<OrderPost, "phone">>;
+
 const CreateOrder: React.FC = () => {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
+
+  const formErrors = useActionData() as PostFormError;
 
   // const [withPriority, setWithPriority] = useState(false);
   const cart = fakeCart;
@@ -61,6 +70,7 @@ const CreateOrder: React.FC = () => {
           <div>
             <input type="tel" name="phone" required />
           </div>
+          {formErrors?.phone && <p>{formErrors.phone}</p>}
         </div>
 
         <div>
@@ -92,25 +102,27 @@ const CreateOrder: React.FC = () => {
   );
 };
 
-type OrderForm = Omit<Order, "cart" | "priority" | "id"> & {
-  cart: string;
-  priority?: "on";
-};
-
 export const action: ActionFunction = async ({
   request,
 }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData) as unknown as OrderForm;
 
-  const order: Omit<Order, "id"> = {
+  const order: OrderPost = {
     ...data,
     cart: JSON.parse(data.cart),
     priority: data.priority === "on",
   };
-  console.log(order);
 
   const newOrder = await createOrder(order);
+
+  const errors: PostFormError = {};
+
+  if (!isValidPhone(order.phone))
+    errors.phone =
+      "Please give us your correct phone number. We might need it to contact you.";
+
+  if (Object.keys(errors).length > 0) return errors;
 
   return redirect(`/order/${newOrder.id}`);
 };

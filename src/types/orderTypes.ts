@@ -17,6 +17,8 @@ export interface Order {
   cart: Cart[];
 }
 
-// phone: string;
-// address: string;
-// position: string;
+export type OrderPost = Omit<Order, "id"> & {
+  phone: string;
+  address: string;
+  // position: string;
+};
