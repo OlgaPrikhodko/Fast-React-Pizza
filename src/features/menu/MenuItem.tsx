@@ -1,11 +1,12 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { formatCurrency } from "@/utils/helpers";
 // Types:
 import { Pizza } from "@/types/menuTypes";
 import { Cart } from "@/types/orderTypes";
-import { addItem } from "../cart/cartSlice";
+import { addItem, getCurrentQuantityById } from "../cart/cartSlice";
 
 import Button from "@/ui/Button";
+import DeleteItem from "../cart/DeleteItem";
 
 interface MenuItemProp {
   pizza: Pizza;
@@ -13,7 +14,10 @@ interface MenuItemProp {
 
 const MenuItem: React.FC<MenuItemProp> = ({ pizza }) => {
   const dispatch = useDispatch();
+
   const { id, name, unitPrice, ingredients, soldOut, imageUrl } = pizza;
+  const currentQuantity = useSelector(getCurrentQuantityById(id));
+  const isInCart = currentQuantity > 0;
 
   const handleAddToCart = () => {
     const newItem: Cart = {
@@ -47,7 +51,9 @@ const MenuItem: React.FC<MenuItemProp> = ({ pizza }) => {
             </p>
           )}
 
-          {!soldOut && (
+          {isInCart && <DeleteItem pizzaId={id} />}
+
+          {!soldOut && !isInCart && (
             <Button type="small" onClick={handleAddToCart}>
               Add to cart
             </Button>
