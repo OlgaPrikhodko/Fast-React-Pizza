@@ -1,13 +1,13 @@
 import { Cart } from "@/types/orderTypes";
 import { formatCurrency } from "@/utils/helpers";
-import Button from "@/ui/Button";
+import DeleteItem from "./DeleteItem";
 
 interface CartItemProps {
   item: Cart;
 }
 
 export const CartItem: React.FC<CartItemProps> = ({ item }) => {
-  const { name, quantity, totalPrice } = item;
+  const { pizzaId, name, quantity, totalPrice } = item;
 
   return (
     <li className="py-3 sm:flex sm:items-center sm:justify-between">
@@ -17,7 +17,7 @@ export const CartItem: React.FC<CartItemProps> = ({ item }) => {
       <div className="flex items-center justify-between gap-6">
         <p className="text-sm font-bold">{formatCurrency(totalPrice)}</p>
 
-        <Button type="small">Delete</Button>
+        <DeleteItem pizzaId={pizzaId} />
       </div>
     </li>
   );
