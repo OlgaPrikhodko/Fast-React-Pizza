@@ -1,3 +1,4 @@
+import { RootState } from "@/store";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -17,3 +18,5 @@ const userSlice = createSlice({
 export const { updateName } = userSlice.actions;
 
 export default userSlice.reducer;
+
+export const getUsername = (state: RootState) => state.user.username;

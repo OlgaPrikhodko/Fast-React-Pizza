@@ -12,8 +12,8 @@ import {
   useActionData,
   useNavigation,
 } from "react-router-dom";
-import { RootState } from "@/store";
 import { useSelector } from "react-redux";
+import { getUsername } from "../user/userSlice";
 
 import { OrderPost } from "@/types/orderTypes";
 import { createOrder } from "@/services/apiRestaurant";
@@ -50,7 +50,7 @@ type OrderForm = Omit<OrderPost, "cart" | "priority" | "id"> & {
 type PostFormError = Partial<Pick<OrderPost, "phone">>;
 
 const CreateOrder: React.FC = () => {
-  const username = useSelector((state: RootState) => state.user.username);
+  const username = useSelector(getUsername);
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
