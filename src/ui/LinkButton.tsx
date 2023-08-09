@@ -4,8 +4,7 @@ interface LinkButtonProps {
   to: string;
   children: string;
 }
-
-export const LinkButton: React.FC<LinkButtonProps> = ({ to, children }) => {
+const LinkButton: React.FC<LinkButtonProps> = ({ to, children }) => {
   const navigate = useNavigate();
   const className = "text-sm text-blue-500 hover:text-blue-600 hover:underline";
 
@@ -22,3 +21,5 @@ export const LinkButton: React.FC<LinkButtonProps> = ({ to, children }) => {
     </Link>
   );
 };
+
+export default LinkButton;
