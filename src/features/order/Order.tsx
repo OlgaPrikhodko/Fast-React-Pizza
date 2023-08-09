@@ -1,5 +1,9 @@
 // Test ID: IIDSAT , CQE92U
-import { LoaderFunction, useLoaderData } from "react-router-dom";
+import {
+  LoaderFunction,
+  LoaderFunctionArgs,
+  useLoaderData,
+} from "react-router-dom";
 import { Order as OrderType } from "@/types/orderTypes";
 import { calcMinutesLeft, formatCurrency, formatDate } from "@/utils/helpers";
 import { getOrder } from "@/services/apiRestaurant";
@@ -72,9 +76,9 @@ const Order: React.FC = () => {
 
 export const loader: LoaderFunction = async ({
   params,
-}: {
-  params: { orderId: string };
-}) => {
+}: LoaderFunctionArgs) => {
+  if (!params.orderId) return;
+
   const order = await getOrder(params.orderId);
 
   return order;
