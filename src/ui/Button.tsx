@@ -4,7 +4,7 @@ interface ButtonProps {
   to?: string;
   disabled?: boolean;
   type: "small" | "primary" | "secondary";
-  children: string;
+  children: string | string[];
 }
 
 export const Button: React.FC<ButtonProps> = ({
