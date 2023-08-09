@@ -32,7 +32,11 @@ const cartSlice = createSlice({
         throw new Error(`Looks like item ${action.payload} is not exists`);
 
       item.quantity = item.quantity - 1;
-      item.totalPrice = item?.quantity * item?.unitPrice;
+      if (item.quantity === 0) {
+        cartSlice.caseReducers.deleteItem(state, action);
+      } else {
+        item.totalPrice = item?.quantity * item?.unitPrice;
+      }
     },
     clearCart(state) {
       state.cart = [];
