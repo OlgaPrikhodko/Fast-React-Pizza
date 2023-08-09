@@ -1,13 +1,29 @@
+import { useDispatch } from "react-redux";
 import { formatCurrency } from "@/utils/helpers";
-import { Pizza } from "@/types/menuTypes";
 import { Button } from "@/ui/Button";
+// Types:
+import { Pizza } from "@/types/menuTypes";
+import { Cart } from "@/types/orderTypes";
+import { addItem } from "../cart/cartSlice";
 
 interface MenuItemProp {
   pizza: Pizza;
 }
 
 const MenuItem: React.FC<MenuItemProp> = ({ pizza }) => {
+  const dispatch = useDispatch();
   const { id, name, unitPrice, ingredients, soldOut, imageUrl } = pizza;
+
+  const handleAddToCart = () => {
+    const newItem: Cart = {
+      pizzaId: id,
+      name,
+      quantity: 1,
+      unitPrice,
+      totalPrice: unitPrice * 1,
+    };
+    dispatch(addItem(newItem));
+  };
 
   return (
     <li className="flex gap-4 py-2">
@@ -30,7 +46,11 @@ const MenuItem: React.FC<MenuItemProp> = ({ pizza }) => {
             </p>
           )}
 
-          <Button type="small">Add to cart</Button>
+          {!soldOut && (
+            <Button type="small" onClick={handleAddToCart}>
+              Add to cart
+            </Button>
+          )}
         </div>
       </div>
     </li>

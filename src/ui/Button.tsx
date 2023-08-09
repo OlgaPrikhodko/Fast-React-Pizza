@@ -5,12 +5,14 @@ interface ButtonProps {
   disabled?: boolean;
   type: "small" | "primary" | "secondary";
   children: string | string[];
+  onClick?: () => void;
 }
 
 export const Button: React.FC<ButtonProps> = ({
   children,
   to,
   type,
+  onClick,
   disabled = false,
 }) => {
   const base =
@@ -28,6 +30,13 @@ export const Button: React.FC<ButtonProps> = ({
       <Link to={to} className={styles[type]}>
         {children}
       </Link>
+    );
+
+  if (onClick)
+    return (
+      <button disabled={disabled} className={styles[type]} onClick={onClick}>
+        {children}
+      </button>
     );
 
   return (
