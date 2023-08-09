@@ -1,10 +1,11 @@
 import { useDispatch } from "react-redux";
 import { formatCurrency } from "@/utils/helpers";
-import { Button } from "@/ui/Button";
 // Types:
 import { Pizza } from "@/types/menuTypes";
 import { Cart } from "@/types/orderTypes";
 import { addItem } from "../cart/cartSlice";
+
+import Button from "@/ui/Button";
 
 interface MenuItemProp {
   pizza: Pizza;

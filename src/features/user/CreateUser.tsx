@@ -1,8 +1,9 @@
-import { Button } from "@/ui/Button";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { updateName } from "./userSlice";
 import { useNavigate } from "react-router-dom";
+import { updateName } from "./userSlice";
+
+import Button from "@/ui/Button";
 
 const CreateUser: React.FC = () => {
   const [username, setUsername] = useState("");

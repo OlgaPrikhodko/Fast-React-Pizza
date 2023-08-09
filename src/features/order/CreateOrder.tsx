@@ -12,12 +12,12 @@ import {
   useActionData,
   useNavigation,
 } from "react-router-dom";
+import { RootState } from "@/store";
+import { useSelector } from "react-redux";
 
 import { OrderPost } from "@/types/orderTypes";
 import { createOrder } from "@/services/apiRestaurant";
-import { Button } from "@/ui/Button";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store";
+import Button from "@/ui/Button";
 
 const fakeCart = [
   {

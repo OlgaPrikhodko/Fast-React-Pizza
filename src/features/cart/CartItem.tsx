@@ -1,13 +1,13 @@
 import { Cart } from "@/types/orderTypes";
-import { Button } from "@/ui/Button";
 import { formatCurrency } from "@/utils/helpers";
+import Button from "@/ui/Button";
 
 interface CartItemProps {
   item: Cart;
 }
 
 export const CartItem: React.FC<CartItemProps> = ({ item }) => {
-  const { pizzaId, name, quantity, totalPrice } = item;
+  const { name, quantity, totalPrice } = item;
 
   return (
     <li className="py-3 sm:flex sm:items-center sm:justify-between">
