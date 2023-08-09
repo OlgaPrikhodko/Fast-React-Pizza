@@ -1,5 +1,5 @@
 // https://uibakery.io/regex-library/phone-number
-const isValidPhone = (str) =>
+const isValidPhone = (str: string) =>
   /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(
     str,
   );
@@ -16,6 +16,8 @@ import {
 import { OrderPost } from "@/types/orderTypes";
 import { createOrder } from "@/services/apiRestaurant";
 import { Button } from "@/ui/Button";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 const fakeCart = [
   {
@@ -48,6 +50,7 @@ type OrderForm = Omit<OrderPost, "cart" | "priority" | "id"> & {
 type PostFormError = Partial<Pick<OrderPost, "phone">>;
 
 const CreateOrder: React.FC = () => {
+  const username = useSelector((state: RootState) => state.user.username);
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
@@ -63,7 +66,13 @@ const CreateOrder: React.FC = () => {
       <Form method="POST">
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="sm:basis-40">First Name</label>
-          <input name="customer" className="input grow" required />
+          <input
+            name="customer"
+            type="text"
+            className="input grow"
+            defaultValue={username}
+            required
+          />
         </div>
 
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
