@@ -1,16 +1,9 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { Cart } from "@/types/orderTypes";
+import { RootState } from "@/store";
 
 const initialState: { cart: Cart[] } = {
-  cart: [
-    {
-      pizzaId: 12,
-      name: "Mediterranean",
-      quantity: 2,
-      unitPrice: 16,
-      totalPrice: 32,
-    },
-  ],
+  cart: [],
 };
 
 const cartSlice = createSlice({
@@ -56,3 +49,9 @@ export const {
 } = cartSlice.actions;
 
 export default cartSlice.reducer;
+
+export const getTotalCartQuantity = (state: RootState) =>
+  state.cart.cart.reduce((acc, item) => acc + item.quantity, 0);
+
+export const getTotalCartPrice = (state: RootState) =>
+  state.cart.cart.reduce((acc, item) => acc + item.totalPrice, 0);
