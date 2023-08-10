@@ -1,16 +1,31 @@
 // Test ID: IIDSAT , CQE92U
+import { useEffect } from "react";
 import {
   LoaderFunction,
   LoaderFunctionArgs,
+  useFetcher,
   useLoaderData,
 } from "react-router-dom";
+
 import { Order as OrderType } from "@/types/orderTypes";
+import { Pizza } from "@/types/menuTypes";
+
 import { calcMinutesLeft, formatCurrency, formatDate } from "@/utils/helpers";
 import { getOrder } from "@/services/apiRestaurant";
+
 import OrderItem from "./OrderItem";
 
 const Order: React.FC = () => {
   const order = useLoaderData() as OrderType;
+
+  const fetcher = useFetcher<Pizza[]>();
+
+  useEffect(
+    function () {
+      if (!fetcher.data && fetcher.state === "idle") fetcher.load("/menu");
+    },
+    [fetcher],
+  );
   // Everyone can search for all orders, so for privacy reasons we're gonna gonna exclude names or address, these are only for the restaurant staff
   const {
     id,
@@ -53,7 +68,15 @@ const Order: React.FC = () => {
 
       <ul className="divide-y divide-stone-200 border-b border-t">
         {cart.map((item) => (
-          <OrderItem item={item} key={item.pizzaId} />
+          <OrderItem
+            item={item}
+            key={item.pizzaId}
+            isLoadingIngredients={fetcher.state === "loading"}
+            ingredients={
+              fetcher?.data?.find((elem) => elem.id === item.pizzaId)
+                ?.ingredients ?? []
+            }
+          />
         ))}
       </ul>
 
