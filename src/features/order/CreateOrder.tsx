@@ -5,7 +5,7 @@ const isValidPhone = (str: string) =>
   );
 
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   ActionFunction,
   ActionFunctionArgs,
@@ -15,8 +15,8 @@ import {
   useNavigation,
 } from "react-router-dom";
 
-import store from "@/store";
-import { getUsername } from "@/features/user/userSlice";
+import store, { AppDispatch } from "@/store";
+import { fetchAddress, getUsername } from "@/features/user/userSlice";
 import {
   clearCart,
   getCart,
@@ -33,7 +33,7 @@ import EmptyCart from "@/features/cart/EmptyCart";
 
 type OrderForm = Omit<OrderPost, "cart" | "priority" | "id"> & {
   cart: string;
-  priority?: "true" | "false";
+  priority?: "on";
 };
 type PostFormError = Partial<Pick<OrderPost, "phone">>;
 
@@ -41,6 +41,8 @@ const CreateOrder: React.FC = () => {
   const [withPriority, setWithPriority] = useState(false);
   const username = useSelector(getUsername);
   const navigation = useNavigation();
+  const dispatch = useDispatch<AppDispatch>();
+
   const isSubmitting = navigation.state === "submitting";
 
   const formErrors = useActionData() as PostFormError;
@@ -55,6 +57,8 @@ const CreateOrder: React.FC = () => {
   return (
     <div className="px-4 py-6">
       <h2 className="mb-8 text-xl font-semibold">Ready to order? Let's go!</h2>
+
+      <button onClick={() => dispatch(fetchAddress())}>Get position</button>
 
       <Form method="POST">
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -98,7 +102,7 @@ const CreateOrder: React.FC = () => {
             name="priority"
             id="priority"
             className="h-6 w-6 accent-yellow-400 focus:outline-none focus:ring focus:ring-yellow-400 focus:ring-offset-2"
-            value={withPriority}
+            checked={withPriority}
             onChange={(e) => setWithPriority(e.target.checked)}
           />
           <label htmlFor="priority" className="font-medium">
@@ -124,12 +128,13 @@ export const action: ActionFunction = async ({
   request,
 }: ActionFunctionArgs) => {
   const formData = await request.formData();
+  console.log(formData);
   const data = Object.fromEntries(formData) as unknown as OrderForm;
-
+  console.log(data);
   const order: OrderPost = {
     ...data,
     cart: JSON.parse(data.cart),
-    priority: data.priority === "true",
+    priority: data.priority === "on",
   };
 
   const newOrder = await createOrder(order);
