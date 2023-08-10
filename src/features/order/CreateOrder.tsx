@@ -13,35 +13,20 @@ import {
   useNavigation,
 } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { getUsername } from "../user/userSlice";
+import store from "@/store";
+import { getUsername } from "@/features/user/userSlice";
+import {
+  clearCart,
+  getCart,
+  getTotalCartPrice,
+} from "@/features/cart/cartSlice";
 
 import { OrderPost } from "@/types/orderTypes";
 import { createOrder } from "@/services/apiRestaurant";
-import Button from "@/ui/Button";
+import { formatCurrency } from "@/utils/helpers";
 
-const fakeCart = [
-  {
-    pizzaId: 12,
-    name: "Mediterranean",
-    quantity: 2,
-    unitPrice: 16,
-    totalPrice: 32,
-  },
-  {
-    pizzaId: 6,
-    name: "Vegetale",
-    quantity: 1,
-    unitPrice: 13,
-    totalPrice: 13,
-  },
-  {
-    pizzaId: 11,
-    name: "Spinach and Mushroom",
-    quantity: 1,
-    unitPrice: 15,
-    totalPrice: 15,
-  },
-];
+import Button from "@/ui/Button";
+import EmptyCart from "@/features/cart/EmptyCart";
 
 type OrderForm = Omit<OrderPost, "cart" | "priority" | "id"> & {
   cart: string;
@@ -57,7 +42,12 @@ const CreateOrder: React.FC = () => {
   const formErrors = useActionData() as PostFormError;
 
   // const [withPriority, setWithPriority] = useState(false);
-  const cart = fakeCart;
+  const cart = useSelector(getCart);
+  const totalCartPrice = useSelector(getTotalCartPrice);
+  const priorityPrice = 0;
+  const totalPrice = totalCartPrice + priorityPrice;
+
+  if (!cart.length) return <EmptyCart />;
 
   return (
     <div className="px-4 py-6">
@@ -104,7 +94,7 @@ const CreateOrder: React.FC = () => {
             type="checkbox"
             name="priority"
             id="priority"
-            className="h-6 w-6 accent-yellow-400 focus:outline-none focus:ring  focus:ring-yellow-400 focus:ring-offset-2"
+            className="h-6 w-6 accent-yellow-400 focus:outline-none focus:ring focus:ring-yellow-400 focus:ring-offset-2"
             // value={withPriority}
             // onChange={(e) => setWithPriority(e.target.checked)}
           />
@@ -116,7 +106,9 @@ const CreateOrder: React.FC = () => {
         <div>
           <input type="hidden" name="cart" value={JSON.stringify(cart)} />{" "}
           <Button type="primary" disabled={isSubmitting}>
-            {isSubmitting ? "Placing order..." : "Order now"}
+            {isSubmitting
+              ? "Placing order..."
+              : `Order now for ${formatCurrency(totalPrice)}`}
           </Button>
         </div>
       </Form>
@@ -145,6 +137,8 @@ export const action: ActionFunction = async ({
       "Please give us your correct phone number. We might need it to contact you.";
 
   if (Object.keys(errors).length > 0) return errors;
+
+  store.dispatch(clearCart());
 
   return redirect(`/order/${newOrder.id}`);
 };
