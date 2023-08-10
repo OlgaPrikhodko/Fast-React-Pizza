@@ -4,6 +4,8 @@ const isValidPhone = (str: string) =>
     str,
   );
 
+import { useState } from "react";
+import { useSelector } from "react-redux";
 import {
   ActionFunction,
   ActionFunctionArgs,
@@ -12,7 +14,7 @@ import {
   useActionData,
   useNavigation,
 } from "react-router-dom";
-import { useSelector } from "react-redux";
+
 import store from "@/store";
 import { getUsername } from "@/features/user/userSlice";
 import {
@@ -22,6 +24,7 @@ import {
 } from "@/features/cart/cartSlice";
 
 import { OrderPost } from "@/types/orderTypes";
+
 import { createOrder } from "@/services/apiRestaurant";
 import { formatCurrency } from "@/utils/helpers";
 
@@ -30,21 +33,21 @@ import EmptyCart from "@/features/cart/EmptyCart";
 
 type OrderForm = Omit<OrderPost, "cart" | "priority" | "id"> & {
   cart: string;
-  priority?: "on";
+  priority?: "true" | "false";
 };
 type PostFormError = Partial<Pick<OrderPost, "phone">>;
 
 const CreateOrder: React.FC = () => {
+  const [withPriority, setWithPriority] = useState(false);
   const username = useSelector(getUsername);
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
   const formErrors = useActionData() as PostFormError;
 
-  // const [withPriority, setWithPriority] = useState(false);
   const cart = useSelector(getCart);
   const totalCartPrice = useSelector(getTotalCartPrice);
-  const priorityPrice = 0;
+  const priorityPrice = withPriority ? totalCartPrice * 0.2 : 0;
   const totalPrice = totalCartPrice + priorityPrice;
 
   if (!cart.length) return <EmptyCart />;
@@ -95,11 +98,12 @@ const CreateOrder: React.FC = () => {
             name="priority"
             id="priority"
             className="h-6 w-6 accent-yellow-400 focus:outline-none focus:ring focus:ring-yellow-400 focus:ring-offset-2"
-            // value={withPriority}
-            // onChange={(e) => setWithPriority(e.target.checked)}
+            value={withPriority}
+            onChange={(e) => setWithPriority(e.target.checked)}
           />
           <label htmlFor="priority" className="font-medium">
-            Want to yo give your order priority?
+            Want to yo give your order priority?{" "}
+            {priorityPrice !== 0 && `(+${formatCurrency(priorityPrice)})`}
           </label>
         </div>
 
@@ -125,7 +129,7 @@ export const action: ActionFunction = async ({
   const order: OrderPost = {
     ...data,
     cart: JSON.parse(data.cart),
-    priority: data.priority === "on",
+    priority: data.priority === "true",
   };
 
   const newOrder = await createOrder(order);
