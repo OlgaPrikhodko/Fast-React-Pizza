@@ -168,9 +168,8 @@ export const action: ActionFunction = async ({
   request,
 }: ActionFunctionArgs) => {
   const formData = await request.formData();
-  console.log(formData);
   const data = Object.fromEntries(formData) as unknown as OrderForm;
-  console.log(data);
+
   const order: OrderPost = {
     ...data,
     cart: JSON.parse(data.cart),

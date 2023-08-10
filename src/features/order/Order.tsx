@@ -14,6 +14,7 @@ import { calcMinutesLeft, formatCurrency, formatDate } from "@/utils/helpers";
 import { getOrder } from "@/services/apiRestaurant";
 
 import OrderItem from "./OrderItem";
+import UpdateOrder from "./UpdateOrder";
 
 const Order: React.FC = () => {
   const order = useLoaderData() as OrderType;
@@ -93,6 +94,8 @@ const Order: React.FC = () => {
           To pay on delivery: {formatCurrency(orderPrice + priorityPrice)}
         </p>
       </div>
+
+      {!priority && <UpdateOrder />}
     </div>
   );
 };

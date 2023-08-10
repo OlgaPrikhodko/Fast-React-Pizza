@@ -40,3 +40,20 @@ export async function createOrder(newOrder: OrderPost): Promise<Order> {
     throw Error("Failed creating your order");
   }
 }
+
+export async function updateOrder(id: string, updateObj: Partial<OrderPost>) {
+  try {
+    const res = await fetch(`${API_URL}/order/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(updateObj),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) throw Error();
+    // We don't need the data, so we don't return anything
+  } catch (err) {
+    throw Error("Failed updating your order");
+  }
+}
